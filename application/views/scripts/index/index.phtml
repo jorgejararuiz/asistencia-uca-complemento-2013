@@ -1,43 +1,99 @@
-<style>
-    a:link,
-    a:visited
-    {
-        color: #0398CA;
-    }
+<?php
+echo $this->headScript()->
+        appendFile($this->baseUrl() . "/js/jquery-1.7.1.js")->
+        appendFile($this->baseUrl() . "/js/bootstrap/bootstrap.js");
 
-    span#zf-name
-    {
-        color: #91BE3F;
-    }
+echo $this->headLink()
+        ->setIndent('  ')
+        ->prependStylesheet($this->baseUrl() . "/css/bootstrap/bootstrap.css")
+        ->prependStylesheet($this->baseUrl() . "/css/bootstrap/bootstrap-responsive.css");
+?>
+<head>
 
-    div#welcome
-    {
-        color: #FFFFFF;
-        background-image: url(http://framework.zend.com/images/bkg_header.jpg);
-        width:  600px;
-        height: 400px;
-        border: 2px solid #444444;
-        overflow: hidden;
-        text-align: center;
-    }
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=EmulateIE8" >
+    <title>Asistencia UCA</title>
+    <style>
+        tr,td{
+            padding: 10px;
+        }
+        #logo{margin: 20px;}
+        a{
+            text-align: right;
+            text-decoration: none;
+            font-size: 10px;
+            font-weight:bold;
+            color: #49AFCD;
+            top: 0;
+            float: right;
+        }
+        #forgot{
+            margin: 0;
+            padding: 0;
+            font-size:11px;
+            height: 11px;
+            line-height: 11px;
+        }
+    </style>
 
-    div#more-information
-    {
-        background-image: url(http://framework.zend.com/images/bkg_body-bottom.gif);
-        height: 100%;
-    }
-</style>
-<div id="welcome">
-    <h1>Welcome to the <span id="zf-name">Zend Framework!</span></h1>
+    <script type="text/javascript">
+        function hideAlert() {
+            $("#value-alert").hide(1000);
+        }
 
-    <h3>This is your project's main page</h3>
+        function doSubmit() {
+            $("#login-form").submit();
+        }
 
-    <div id="more-information">
-        <p><img src="http://framework.zend.com/images/PoweredBy_ZF_4LightBG.png" /></p>
-        <p>
-            Helpful Links: <br />
-            <a href="http://framework.zend.com/">Zend Framework Website</a> |
-            <a href="http://framework.zend.com/manual/en/">Zend Framework Manual</a>
-        </p>
+        $(document).ready(function() {
+            setTimeout("hideAlert()", 7500);
+
+//            $("#login-btn").click(function(event) {
+//                doSubmit();
+//            });
+
+            $("#login-form").validate({
+                rules: {
+                    username: {
+                        required: true
+                    },
+                    password: {
+                        required: true
+                    }
+                },
+                messages: {
+                    username: "Username requerido",
+                    password: "Password requerido"
+                }
+            });
+        });
+    </script>
+
+</head>
+<div class="span3" style="margin: 0px;">
+    <div id="logo">   
+        <h1>Marcación</h1>
+    </div>
+    <div id="login" >
+
+        <form id="login-form" action="<?php echo $this->url(array('controller' => 'administration', 'action' => 'login')); ?>" method="post">
+            <table>
+                <tr><td>Usuario</td><td><input type="text" id="username" name="username"></td></tr>
+                <tr><td>Contrase&ntilde;a</td><td><input type="password" id="password" name="password"></td></tr>
+                <tr><td>Materias</td><td><select name="Materia">
+                        <option value="value1">Ecuaciones Diferenciales</option>
+                        <option value="value2">Estadística</option>
+                        <option value="value3">Investigación de Operaciones</option>
+                        <option value="value4">Cálculo Numérico</option>
+                </select>
+                </tr>
+                
+                <tr><td></td><td>
+                <a onclick="doSubmit();" href="#" class="btn btn-primary" id="login-btn"> <i class="icon-hand-right icon-white"></i>Marcar</a></td>
+
+                    <?php echo $this->loginError; ?>
+            </table>
+        </form>
     </div>
 </div>
+<div class="span3"></div>
