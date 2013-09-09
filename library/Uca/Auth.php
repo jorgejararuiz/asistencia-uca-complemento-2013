@@ -26,9 +26,11 @@ class Uca_Auth {
         ));
         $userInfo = array();
         // client data
-        $select = $db->select()
-                ->from(array('public.personas'), array('nombre', 'apellido', 'ci', 'telefono', 'fecha_nacimiento' ,'sexo', 'email'))
-                ->where("email = ?", $this->username);
+//        $select = $db->select()
+//                ->from(array('public.personas'), array('nombre', 'apellido', 'ci', 'telefono', 'fecha_nacimiento' ,'sexo', 'email'))
+//                ->where("email = ?", $this->username);
+        $select = "SELECT * FROM personas AS PERSONAS where PERSONAS.email = '". $this->username ."'";
+       
 
         $result = $db->fetchRow($select);
         $userInfo["nombre"] = $result["nombre"];
@@ -61,20 +63,23 @@ class Uca_Auth {
                 ->setCredentialColumn('password')
                 ->setIdentity($this->username)
                 ->setCredential($this->password);
-        
-        $auth = Zend_Auth::getInstance();
        
+        $auth = Zend_Auth::getInstance();
+
+        
         try {
             $result = $auth->authenticate($authAdapter);
+            if ($result->isValid()) {
+                // the default storage is a session with namespace Zend_Auth  
+                $authStorage = $auth->getStorage();
+                $authStorage->write($this->getUserInfo());
+                return true;
+            }
+            return false;
         } catch (Exception $exc) {
             $this->_debugLogger->debug($exc->getTraceAsString());
         }
-        if ($result->isValid()) {
-            // the default storage is a session with namespace Zend_Auth  
-            $authStorage = $auth->getStorage();
-            $authStorage->write($this->getUserInfo());
-            return true;
-        }
+        
         return false;
     }
 

@@ -21,13 +21,16 @@ class AdministrationController extends Zend_Controller_Action
 
     public function indexAction(){
         
+        if (Zend_Auth::getInstance()->hasIdentity() == 1) {
+            $this->_redirect("/register/signup");       
+        }
+
+        
     }
     
     public function loginAction(){
        
-
-        
-        if (Zend_Auth::getInstance()->hasIdentity()) {
+        if (Zend_Auth::getInstance()->hasIdentity() == 1) {
             $this->_redirect("/register/signup");       
         }
         
@@ -44,7 +47,7 @@ class AdministrationController extends Zend_Controller_Action
             
                 //Si es, se hace la autenticacion para mantener la sesión
                 $authentication = new Uca_Auth($username, $password);
-                
+
                 if ($authentication->authenticate()) {
                     $this->_debugLogger->debug("Login Exitoso");
                     $this->_redirect("/register/signup");
@@ -86,10 +89,8 @@ class AdministrationController extends Zend_Controller_Action
                  "on ROL.id_rol = 1 ".
                  "and PERSONAS.id_persona = ROL.id_persona ". 
                  "and PERSONAS.email = '". $email .
-                 "' and PERSONAS.password = '". $password ."'"
-               
-               
-               ;
+                 "' and PERSONAS.password = '". $password ."'";
+       
        $this->_debugLogger->debug($select);
        try {
            $result = $db->fetchRow($select);
