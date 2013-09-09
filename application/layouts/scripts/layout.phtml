@@ -38,7 +38,8 @@ echo $this->headLink()
                 </a>
                 <div class="nav-collapse collapse">
                         <ul class="nav">
-                            <li><a href="http://local.uca.edu.py/"><i class="icon-home icon-white"></i>Asistencia</a></li>
+                            <li><a href="<?php echo $this->baseUrl() . "/index/asistenciafuncionarios" ?>"></i>Asistencia Funcionarios</a></li>    
+                            <li><a href="<?php echo $this->baseUrl() . "/index/asistenciaprofesores" ?>"></i>Asistencia Profesores</a></li>    
                             <li><a href="<?php echo $this->baseUrl() . "/recuperaciones" ?>"></i>Recuperación de Clase</a></li>    
                             <li><a href="<?php echo $this->baseUrl() . "/administration/index" ?>"></i>Registrar Nuevo Usuario</a></li>    
                          </ul>
