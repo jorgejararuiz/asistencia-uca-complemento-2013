@@ -1,0 +1,94 @@
+<?php
+echo $this->headScript()->
+        appendFile($this->baseUrl() . "/js/jquery-1.7.1.js")->
+        appendFile($this->baseUrl() . "/js/bootstrap/bootstrap.js");
+
+echo $this->headLink()
+        ->setIndent('  ')
+        ->prependStylesheet($this->baseUrl() . "/css/bootstrap/bootstrap.css")
+        ->prependStylesheet($this->baseUrl() . "/css/bootstrap/bootstrap-responsive.css");
+?>
+<head>
+
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=EmulateIE8" >
+    <title>Asistencia UCA</title>
+    <style>
+        tr,td{
+            padding: 10px;
+        }
+        #logo{margin: 20px;}
+        a{
+            text-align: right;
+            text-decoration: none;
+            font-size: 10px;
+            font-weight:bold;
+            color: #49AFCD;
+            top: 0;
+            float: right;
+        }
+        #forgot{
+            margin: 0;
+            padding: 0;
+            font-size:11px;
+            height: 11px;
+            line-height: 11px;
+        }
+    </style>
+
+    <script type="text/javascript">
+        function hideAlert() {
+            $("#value-alert").hide(1000);
+        }
+
+        function doSubmit() {
+            $("#login-form").submit();
+        }
+
+        $(document).ready(function() {
+            setTimeout("hideAlert()", 7500);
+
+//            $("#login-btn").click(function(event) {
+//                doSubmit();
+//            });
+
+            $("#login-form").validate({
+                rules: {
+                    username: {
+                        required: true
+                    },
+                    password: {
+                        required: true
+                    }
+                },
+                messages: {
+                    username: "Username requerido",
+                    password: "Password requerido"
+                }
+            });
+        });
+    </script>
+
+</head>
+   <p style="margin-left: 10px;" class="navbar-text pull-right"><a href="/administration/logout">Volver al inicio</a></p>
+<div class="span6"></div>
+<div class="span3" style="margin: 30px;">
+    <div id="logo">   
+        <h1>Asistencia UCA</h1>
+    </div>
+    <div id="login" >
+
+        <form id="login-form" action="<?php echo $this->url(array('controller' => 'administration', 'action' => 'login')); ?>" method="post">
+            <table>
+                <tr><td>Usuario</td><td><input type="text" id="username" name="username"></td></tr>
+                <tr><td>Contrase&ntilde;a</td><td><input type="password" id="password" name="password"></td></tr>
+                <tr id="forgot"><td></td><td><a href="<?php echo $this->url(array('controller' => 'administration', 'action' => 'passwordforgot')); ?>">Olvid&oacute; su password?</a></td></tr>
+                <tr><td>
+                         <input type="submit" id="submit">
+                </tr>
+                <?php echo $this->loginError; ?>
+            </table>
+        </form>
+    </div>
+</div>
+<div class="span3"></div>
