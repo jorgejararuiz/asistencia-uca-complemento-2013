@@ -131,7 +131,7 @@ class Users extends Zend_Db_Table_Abstract
        }
        return false;
    }
-   
+           
    function checkKey($email){
        
        $db = Zend_Db_Table_Abstract::getDefaultAdapter();

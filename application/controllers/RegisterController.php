@@ -40,7 +40,7 @@ class RegisterController extends Zend_Controller_Action
          * Implementar el guardado o registro de usuarios nuevos
          */
         $this->_helper->layout->disableLayout();
-        //$users = new Users();
+        $users = new Users();
         $form = new Application_Form_RegistrationForm();
         $form->setDecorators(array(
                'FormElements',
@@ -49,24 +49,30 @@ class RegisterController extends Zend_Controller_Action
         header("Content-Type: text/html;charset=utf-8");
         $this->view->form=$form;
 
-//           if($this->getRequest()->isPost()){
-//               if($form->isValid($_POST)){
-//                   //$form->removeElement('contrasenha2');
-//                   $data = $form->getValues();
-//                   if($data['contrasenha'] != $data['contrasenha2']){
-//                       $this->view->errorMessage = "Las contraseñas deben coincidir";
-//                       return;
-//                   }
-//                   if($users->checkUnique($data['email'])){
-//                       $this->view->errorMessage = "El email ya esta registrado";
-//                       return;
-//                   }
-//                   $data['contrasenha'] = md5($data['contrasenha']);
-//                   unset($data['contrasenha2']);
-//                   
+           if($this->getRequest()->isPost()){
+               if($form->isValid($_POST)){
+                   $this->_debugLogger->debug("Form is Valid");
+                   //$form->removeElement('contrasenha2');
+                   $data = $form->getValues();
+                   if($data['password'] != $data['contrasenha2']){
+                       $this->view->errorMessage = "Las contraseñas deben coincidir";
+                       return;
+                   }
+                   if($users->checkUnique($data['email'])){
+                       $this->view->errorMessage = "El email ya esta registrado";
+                       return;
+                   }
+                   $data['password'] = md5($data['password']);
+                   unset($data['contrasenha2']);
+                   $idRol = $data['id_rol'];
+                   unset($data['id_rol']);
 //                   try {
-//                   $users->insert($data);
-//                   //Manda Mail de confirmación
+                   $this->_debugLogger->debug("About to insert");
+                   $users->insertUser($data, $idRol);
+                   $this->_debugLogger->debug("Inserted");
+                   $this->addRol($idRol, $data['email']);
+
+                   //Manda Mail de confirmación
 //                   $config = array('auth' => 'login',
 //                        'port' => '26',
 //                        'username' => 'support@pearljamparaguay.com',
@@ -78,7 +84,7 @@ class RegisterController extends Zend_Controller_Action
 //                    $mail = new Zend_Mail();
 //                    $mail->addTo($data['email']);
 //                    $mail->setSubject('Confirmación de Registro');
-//                    $msg = utf8_encode("Estimado ". $data['nombre'] .":\n Usted se ha registrado satisfactoriamente a Ticketshow. \nGracias.");
+//                    $msg = utf8_encode("Estimado ". $data['nombre'] .":\n Usted se ha registrado satisfactoriamente a Asistencia UCA. \nGracias.");
 //                    $mail->setBodyHtml($msg);
 //                    $mail->send($tr);
 //                    $this->_infoLogger->info("[Usuario Registrado] Mail:".$data['email']);
@@ -86,11 +92,34 @@ class RegisterController extends Zend_Controller_Action
 //                    } catch (Exception $exc) {
 //                       $this->_errorLogger->error($exc->getTraceAsString());
 //                       echo $exc->getTraceAsString();
-//                       $this->_redirect('login');
+                       $this->_redirect('index');
 //                   }
-//               }
-//           } 
+               }
+           } 
          
+       }
+
+       private function addRol($idRol, $email){
+            $db = new Zend_Db_Adapter_Pdo_Pgsql(array(
+                     'host' => 'localhost',  
+                     'username' => 'admin',  
+                     'password' => 'admin',  
+                     'dbname' => 'asistenciaUCA'        
+            ));
+            $select = $db->select()
+                ->from(array('personas'), array('id_persona'))
+                ->where("email = ?", $email);
+            $result = $db->fetchRow($select);
+
+            $array = array(
+                        'id_persona'=> $result['id_persona'],
+                        'id_rol' => $idRol
+            );
+            $this->_debugLogger->debug("Insertado en Rol_X_Persona: ".  print_r($array, true));  
+            $insert = $db->insert('rol_x_persona', $array);
+            
+            
+           return true;
        }
 }
 
@@ -100,22 +129,58 @@ class RegisterController extends Zend_Controller_Action
 class Users extends Zend_Db_Table_Abstract
 {
 
-    protected $_name="web.web_users";
+    protected $_name="personas";
     
     function checkUnique($email){
        
-       $db = Zend_Db_Table_Abstract::getDefaultAdapter();
-       $authAdapter = new Zend_Auth_Adapter_DbTable($db);
-       $select = $db->select()
-                ->from(array('web.web_users'), array('email'))
-                ->where("email = ?", $email);
-       $result = $db->fetchRow($select);
-       
-       if($result){
-           return true;
-       }
-       return false;
+    $db = new Zend_Db_Adapter_Pdo_Pgsql(array(
+                     'host' => 'localhost',  
+                    'username' => 'admin',  
+                    'password' => 'admin',  
+                    'dbname' => 'asistenciaUCA'        
+        ));
+    $authAdapter = new Zend_Auth_Adapter_DbTable($db);
+    $select = $db->select()
+            ->from(array('personas'), array('email'))
+            ->where("email = ?", $email);
+    $result = $db->fetchRow($select);
+    if($result){
+        return true;
+        
+    }
+    return false;
    }
+   
+   function insertUser($data, $idRol){
+       
+    //inserta a la persona
+    $db = new Zend_Db_Adapter_Pdo_Pgsql(array(
+                 'host' => 'localhost',  
+                'username' => 'admin',  
+                'password' => 'admin',  
+                'dbname' => 'asistenciaUCA'        
+    ));
+    $insert = $db->insert('personas', $data);
+    
+   }
+   
+//   function insertRol($idPersona, $idRol){
+//    $db = new Zend_Db_Adapter_Pdo_Pgsql(array(
+//             'host' => 'localhost',  
+//            'username' => 'admin',  
+//            'password' => 'admin',  
+//            'dbname' => 'asistenciaUCA'        
+//    ));
+//       
+//       //Inserta el rol de la persona
+//    $select = $db->select()
+//        ->from(array('personas'), array('id_persona'))
+//        ->where("email = ?", $data['email']);
+//    $result = $db->fetchRow($select);
+//    
+//    $db->insert('rol_x_persona', array('id_rol'=>$idRol, 'id_persona'=>$result['id_persona']));
+//    
+//   }
 
 }
 
@@ -159,7 +224,7 @@ class Application_Form_RegistrationForm extends Zend_Form {
         
         $passwordValidator = new MyValid_PasswordStrength();
         
-        $password = $this->createElement('password','contrasenha');
+        $password = $this->createElement('password','password');
         $password->setLabel('Contraseña: ')
                 ->setDecorators($horizontalDecorators) 
                 ->setRequired(true)
@@ -175,7 +240,7 @@ class Application_Form_RegistrationForm extends Zend_Form {
                 ->addValidator($notEmpty, true)
                 ->addValidator($passwordValidator);
                 
-        $numeroDeDocumento = $this->createElement('text', 'numero_documento');
+        $numeroDeDocumento = $this->createElement('text', 'ci');
         $numeroDeDocumento->setLabel("Número de Documento:")
                 ->setDecorators($horizontalDecorators) 
                 ->setRequired(true)
@@ -187,11 +252,6 @@ class Application_Form_RegistrationForm extends Zend_Form {
                 ->setDecorators($horizontalDecorators) 
                 ->addValidator($notEmpty, true)
                 ->setRequired(true);
-
-        $celular = $this->createElement('text', 'celular');
-        $celular->setLabel('Celular: ')
-                ->setDecorators($horizontalDecorators) 
-                ->setRequired(false);
         
         $decorator = array(
                    'ViewHelper',
@@ -205,16 +265,36 @@ class Application_Form_RegistrationForm extends Zend_Form {
                 ->addValidator($notEmpty, true)
                 ->setIgnore(true);
         
+        $rol = $this->createElement('select', 'id_rol');
+        $rol ->setLabel('Rol: ')
+             ->setRequired(true)
+             ->addValidator($notEmpty, true)
+             ->setDecorators($horizontalDecorators) 
+             ->addMultiOptions(array(
+                    '2' => 'Profesor',
+                    '3' => 'Funcionario' 
+             ));
+        
+        $sexo = $this->createElement('select', 'sexo');
+        $sexo ->setLabel('Sexo: ')
+             ->setRequired(true)
+             ->addValidator($notEmpty, true)
+             ->setDecorators($horizontalDecorators) 
+             ->addMultiOptions(array(
+                    'M' => 'Masculino',
+                    'F' => 'Femenino' 
+             ));
             
         $this->addElements(array(
                         $firstname,
                         $lastname,
                         $email,
+                        $rol,
+                        $sexo,
                         $password,
                         $confirmPassword,
                         $numeroDeDocumento,
                         $telefono,
-                        $celular,
                         $register
         ));
     }
