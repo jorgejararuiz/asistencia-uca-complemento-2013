@@ -76,12 +76,12 @@ echo $this->headLink()
     </div>
     <div id="login" >
 
-        <form id="login-form" action="<?php echo $this->url(array('controller' => 'administration', 'action' => 'login')); ?>" method="post">
+        <form id="login-form" action="<?php echo $this->url(array('controller' => 'index', 'action' => 'asistenciafuncionarios')); ?>" method="post">
             <table>
                 <tr><td>Usuario</td><td><input type="text" id="username" name="username"></td></tr>
-                <tr><td>Contrase&ntilde;a</td><td><input type="password" id="password" name="password"></td></tr> 
                 <tr><td></td><td>
-                <a onclick="doSubmit();" href="#" class="btn btn-primary" id="login-btn"> <i class="icon-hand-right icon-white"></i>Marcar</a></td>
+                <input type="submit" id="submit">
+                <!--<a onclick="doSubmit();" href="#" class="btn btn-primary" id="login-btn"> <i class="icon-hand-right icon-white"></i>Marcar</a></td>-->
 
                     <?php echo $this->loginError; ?>
             </table>

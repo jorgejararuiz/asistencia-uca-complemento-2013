@@ -70,10 +70,9 @@ echo $this->headLink()
     </script>
 
 </head>
-   <p style="margin-left: 10px;" class="navbar-text pull-right"><a href="/administration/logout">Volver al inicio</a></p>
-<div class="span3" style="margin: 30px;">
+<div class="span3" style="margin: 0px;">
     <div id="logo">   
-        <h1>Asistencia UCA</h1>
+        <h1>Recuperacion de Clase</h1>
     </div>
     <div id="login" >
 
@@ -81,10 +80,10 @@ echo $this->headLink()
             <table>
                 <tr><td>Usuario</td><td><input type="text" id="username" name="username"></td></tr>
                 <tr><td>Contrase&ntilde;a</td><td><input type="password" id="password" name="password"></td></tr>
-                <tr><td>
-                         <input type="submit" id="submit">
-                </tr>
-                <?php echo $this->loginError; ?>
+                <tr><td></td><td>
+                <a onclick="doSubmit();" href="#" class="btn btn-primary" id="login-btn"> <i class="icon-hand-right icon-white"></i>Marcar</a></td>
+
+                    <?php echo $this->loginError; ?>
             </table>
         </form>
     </div>

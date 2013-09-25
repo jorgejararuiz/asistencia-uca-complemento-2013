@@ -63,7 +63,6 @@ echo $this->headLink()
                 },
                 messages: {
                     username: "Username requerido",
-                    password: "Password requerido"
                 }
             });
         });
@@ -76,20 +75,20 @@ echo $this->headLink()
     </div>
     <div id="login" >
 
-        <form id="login-form" action="<?php echo $this->url(array('controller' => 'administration', 'action' => 'login')); ?>" method="post">
+        <form id="login-form" action="<?php echo $this->url(array('controller' => 'index', 'action' => 'asistenciaprofesores')); ?>" method="post">
             <table>
                 <tr><td>Usuario</td><td><input type="text" id="username" name="username"></td></tr>
-                <tr><td>Contrase&ntilde;a</td><td><input type="password" id="password" name="password"></td></tr>
-                <tr><td>Materias</td><td><select name="Materia">
-                        <option value="value1">Ecuaciones Diferenciales</option>
-                        <option value="value2">Estadística</option>
-                        <option value="value3">Investigación de Operaciones</option>
-                        <option value="value4">Cálculo Numérico</option>
+                <tr><td>Materias</td><td><select name="materia">
+                        <option value="1">Ecuaciones Diferenciales</option>
+                        <option value="2">Estadística</option>
+                        <option value="3">Informatica 3</option>
+                        <option value="4">Ingenieria de Software</option>
                 </select>
                 </tr>
-                
                 <tr><td></td><td>
-                <a onclick="doSubmit();" href="#" class="btn btn-primary" id="login-btn"> <i class="icon-hand-right icon-white"></i>Marcar</a></td>
+                                        <input type="submit" id="submit">
+
+                <!--<a onclick="doSubmit();" href="#" class="btn btn-primary" id="login-btn"> <i class="icon-hand-right icon-white"></i>Marcar</a></td>-->
 
                     <?php echo $this->loginError; ?>
             </table>

@@ -13,7 +13,7 @@ class AdministrationController extends Zend_Controller_Action
     
     public function init()
     {
-        $this->_helper->layout->disableLayout();
+        //$this->_helper->layout->disableLayout();
         $this->_debugLogger = Zend_Registry::get(Uca_Common::DEBUG_LOG);
         $this->_errorLogger = Zend_Registry::get(Uca_Common::ERROR_LOG);
         $this->_infoLogger = Zend_Registry::get(Uca_Common::INFO_LOG); 
@@ -25,7 +25,6 @@ class AdministrationController extends Zend_Controller_Action
             $this->_redirect("/register/signup");       
         }
 
-        
     }
     
     public function loginAction(){
@@ -106,7 +105,7 @@ class AdministrationController extends Zend_Controller_Action
         
         
     }
-    
+
     public function adminAction(){
         
         
