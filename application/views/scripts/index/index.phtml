@@ -70,15 +70,16 @@ echo $this->headLink()
     </script>
 
 </head>
-<div class="span3" style="margin: 0px;">
+<div class="span6" style="margin: 0px;">
     <div id="logo">   
-        <h1>Marcación</h1>
+        <br><br><br>
+        <h1>Sistema de Marcación</h1>
     </div>
     <div id="login" >
 
         <form id="login-form" action="<?php echo $this->url(array('controller' => 'administration', 'action' => 'login')); ?>" method="post">
             <table>
-                <tr><td>Usuario</td><td><input type="text" id="username" name="username"></td></tr>
+<!--                <tr><td>Usuario</td><td><input type="text" id="username" name="username"></td></tr>
                 <tr><td>Contrase&ntilde;a</td><td><input type="password" id="password" name="password"></td></tr>
                 <tr><td>Materias</td><td><select name="Materia">
                         <option value="value1">Ecuaciones Diferenciales</option>
@@ -89,7 +90,7 @@ echo $this->headLink()
                 </tr>
                 
                 <tr><td></td><td>
-                <a onclick="doSubmit();" href="#" class="btn btn-primary" id="login-btn"> <i class="icon-hand-right icon-white"></i>Marcar</a></td>
+                <a onclick="doSubmit();" href="#" class="btn btn-primary" id="login-btn"> <i class="icon-hand-right icon-white"></i>Marcar</a></td>-->
 
                     <?php echo $this->loginError; ?>
             </table>
