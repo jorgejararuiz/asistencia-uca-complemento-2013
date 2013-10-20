@@ -32,7 +32,11 @@ class IndexController extends Zend_Controller_Action
                 if($this->checkUnique($username) == true){
                     $userId = $this->obtainUserId($username);
                     if($userId['id_rol_x_persona'] != -1){
-                        $errorRegistering = $this->insertRegisterWorkers($userId['id_rol_x_persona']);
+                        if($this->isCheckOut($userId['id_rol_x_persona'])){
+                            $errorRegistering = $this->insertCheckOutWorkers($userId['id_rol_x_persona']);
+                        }else{
+                            $errorRegistering = $this->insertRegisterWorkers($userId['id_rol_x_persona']);
+                        }
                     }else{
                     $errorRegistering = true;
                     }    
@@ -205,6 +209,37 @@ class IndexController extends Zend_Controller_Action
 
     }
     
+    private function isCheckOut($userId){
+       //Obtiene la Configuracion de la DB
+        $db = new Zend_Db_Adapter_Pdo_Pgsql(array(
+             'host' => 'localhost',  
+            'username' => 'admin',  
+            'password' => 'admin',  
+            'dbname' => 'asistenciaUCA'        
+        ));
+        
+        $select = "select * from marcaciones_funcionarios where "
+                  . " entrada > (now() - interval '24 hours') "
+                  . " and entrada = salida "
+                  . " and id_rol_x_persona = ".$userId;
+        
+        
+        $this->_debugLogger->debug($select);
+        try {
+        //Intenta meter en la DB
+            $result = $db->fetchRow($select);
+        } catch (Exception $exc) {
+            $this->_debugLogger->debug($exc->getTraceAsString());
+        }
+
+        if($result){
+            return true;
+        }
+            return false;
+    }
+     
+    
+    
     private function insertRegisterWorkers($userId){
         //Obtiene la Configuracion de la DB
         $db = new Zend_Db_Adapter_Pdo_Pgsql(array(
@@ -213,10 +248,12 @@ class IndexController extends Zend_Controller_Action
             'password' => 'admin',  
             'dbname' => 'asistenciaUCA'        
         ));
+        
         $insert = "insert into marcaciones_funcionarios "
-                ."(entrada, id_rol_x_persona) values "
-                ."(now(),". $userId.")";
-   
+                ."(entrada, salida, id_rol_x_persona) values "
+                ."(now(), now(),". $userId.")";
+        
+        
         $this->_debugLogger->debug($insert);
         try {
         //Intenta meter en la DB
@@ -229,6 +266,36 @@ class IndexController extends Zend_Controller_Action
             return true;
         }
             return false;
+    }
+    
+    private function insertCheckOutWorkers($userId){
+        
+        //Obtiene la Configuracion de la DB
+        $db = new Zend_Db_Adapter_Pdo_Pgsql(array(
+             'host' => 'localhost',  
+            'username' => 'admin',  
+            'password' => 'admin',  
+            'dbname' => 'asistenciaUCA'        
+        ));
+        
+        $insert = "update marcaciones_funcionarios set salida = now() "
+                  . "  where entrada = salida"
+                  . "  and id_rol_x_persona = " . $userId;
+        
+        
+        $this->_debugLogger->debug($insert);
+        try {
+        //Intenta meter en la DB
+            $result = $db->fetchRow($insert);
+        } catch (Exception $exc) {
+            $this->_debugLogger->debug($exc->getTraceAsString());
+        }
+
+        if($result){
+            return true;
+        }
+            return false;
+        
     }
     
 }
