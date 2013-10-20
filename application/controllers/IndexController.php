@@ -6,7 +6,6 @@ class IndexController extends Zend_Controller_Action
     private $_debugLogger;
     private $_errorLogger;
     private $_infoLogger;
-    
     public function init(){
         //$this->_helper->layout->disableLayout();
         $this->_debugLogger = Zend_Registry::get(Uca_Common::DEBUG_LOG);
@@ -32,7 +31,9 @@ class IndexController extends Zend_Controller_Action
                 if($this->checkUnique($username) == true){
                     $userId = $this->obtainUserId($username);
                     if($userId['id_rol_x_persona'] != -1){
-                        if($this->isCheckOut($userId['id_rol_x_persona'])){
+                        //isCheckOut se le pasa 1 para decir que es Funcionario
+                        //como segundo parametro
+                        if($this->isCheckOut($userId['id_rol_x_persona'], 1)){
                             $errorRegistering = $this->insertCheckOutWorkers($userId['id_rol_x_persona']);
                         }else{
                             $errorRegistering = $this->insertRegisterWorkers($userId['id_rol_x_persona']);
@@ -71,7 +72,16 @@ class IndexController extends Zend_Controller_Action
             $this->_debugLogger->debug("Materia: ". $materia);
             if (trim($username) != "" && !is_null($materia)) {
                 if($this->checkUnique($username) == true){
-                    $errorRegistering = $this->insertRegister($materia);
+                    //Se le pasa 0 como segundo parametro para indicar que 
+                    //es profesor
+                    if($this->isCheckOut($materia, 0)){
+                        $horario = 1;
+                        $errorRegistering = $this->insertCheckOutTeacher($horario, $materia);
+                    }else{
+                        $horario = 1;
+                        $errorRegistering = $this->insertRegisterTeacher($horario, $materia);
+                    
+                    }
                 }else{
                     $errorRegistering = true;
                 }
@@ -181,7 +191,7 @@ class IndexController extends Zend_Controller_Action
         }
         
     }
-    private function insertRegister($materia){
+    private function insertRegisterTeacher($horario, $materia){
         //Obtiene la Configuracion de la DB
         $db = new Zend_Db_Adapter_Pdo_Pgsql(array(
              'host' => 'localhost',  
@@ -191,8 +201,8 @@ class IndexController extends Zend_Controller_Action
         ));
         
         $insert = "insert into marcaciones_profesores "
-                ."(entrada, id_horario, id_materia) values "
-                ."(now(), 1,". $materia.")";
+                ."(entrada, salida, id_horario, id_materia) values "
+                ."(now(), now(), ". $horario .", ". $materia.")";
    
         $this->_debugLogger->debug($insert);
         try {
@@ -209,7 +219,7 @@ class IndexController extends Zend_Controller_Action
 
     }
     
-    private function isCheckOut($userId){
+    private function isCheckOut($userId, $isTeacher){
        //Obtiene la Configuracion de la DB
         $db = new Zend_Db_Adapter_Pdo_Pgsql(array(
              'host' => 'localhost',  
@@ -217,12 +227,19 @@ class IndexController extends Zend_Controller_Action
             'password' => 'admin',  
             'dbname' => 'asistenciaUCA'        
         ));
+        $select = "";
         
-        $select = "select * from marcaciones_funcionarios where "
-                  . " entrada > (now() - interval '24 hours') "
-                  . " and entrada = salida "
-                  . " and id_rol_x_persona = ".$userId;
-        
+        if($isTeacher == 0){
+            $select = "select * from marcaciones_profesores where "
+                      . " entrada > (now() - interval '24 hours') "
+                      . " and entrada = salida "
+                      . " and id_materia = ".$userId;
+        }else{
+            $select = "select * from marcaciones_funcionarios where "
+                      . " entrada > (now() - interval '24 hours') "
+                      . " and entrada = salida "
+                      . " and id_rol_x_persona = ".$userId;
+        }        
         
         $this->_debugLogger->debug($select);
         try {
@@ -281,6 +298,36 @@ class IndexController extends Zend_Controller_Action
         $insert = "update marcaciones_funcionarios set salida = now() "
                   . "  where entrada = salida"
                   . "  and id_rol_x_persona = " . $userId;
+        
+        
+        $this->_debugLogger->debug($insert);
+        try {
+        //Intenta meter en la DB
+            $result = $db->fetchRow($insert);
+        } catch (Exception $exc) {
+            $this->_debugLogger->debug($exc->getTraceAsString());
+        }
+
+        if($result){
+            return true;
+        }
+            return false;
+        
+    }
+    private function insertCheckOutTeacher($horario, $materia){
+        
+        //Obtiene la Configuracion de la DB
+        $db = new Zend_Db_Adapter_Pdo_Pgsql(array(
+             'host' => 'localhost',  
+            'username' => 'admin',  
+            'password' => 'admin',  
+            'dbname' => 'asistenciaUCA'        
+        ));
+        
+        $insert = "update marcaciones_profesores set salida = now() "
+                  . "  where entrada = salida"
+                  . "  and id_horario = " . $horario
+                  . "  and id_materia = " . $materia;
         
         
         $this->_debugLogger->debug($insert);
