@@ -19,6 +19,8 @@ class IndexController extends Zend_Controller_Action
 
     public function asistenciafuncionariosAction(){
         
+    try {
+        
         //Variable para establecer si se hizo o no el registro
         //en la DB de la marcación
         $errorRegistering = false;
@@ -55,6 +57,12 @@ class IndexController extends Zend_Controller_Action
             $this->_debugLogger->debug("Error de Autenticacion");
             //$this->_redirect("index");
         }
+        
+    } catch (Exception $exc) {
+        echo $exc->getTraceAsString();
+        $this->_debugLogger->debug($exc->getTraceAsString());
+    }
+
         
         
     }

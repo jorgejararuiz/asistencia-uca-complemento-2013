@@ -397,3 +397,27 @@
 2013-10-20T23:28:24+02:00 DEBUG (7): update marcaciones_profesores set salida = now()   where entrada = salida  and id_horario = 1  and id_materia = 1
 2013-10-20T23:28:24+02:00 INFO (6): Debug log created
 2013-10-20T23:28:24+02:00 INFO (6): Debug log created
+2013-10-20T23:39:31+02:00 INFO (6): Debug log created
+2013-10-20T23:39:31+02:00 INFO (6): Debug log created
+2013-10-20T23:39:31+02:00 INFO (6): Debug log created
+2013-10-20T23:39:32+02:00 INFO (6): Debug log created
+2013-10-20T23:39:32+02:00 INFO (6): Debug log created
+2013-10-20T23:39:32+02:00 INFO (6): Debug log created
+2013-10-20T23:39:41+02:00 INFO (6): Debug log created
+2013-10-20T23:39:41+02:00 DEBUG (7): SELECT * FROM personas AS PERSONAS INNER JOIN rol_x_persona as ROL on ROL.id_rol = 1 and PERSONAS.id_persona = ROL.id_persona and PERSONAS.email = 'salustiano@uca.edu.py' and PERSONAS.password = '21232f297a57a5a743894a0e4a801fc3'
+2013-10-20T23:39:42+02:00 DEBUG (7): authenticate user
+2013-10-20T23:39:42+02:00 DEBUG (7): username: salustiano@uca.edu.py
+2013-10-20T23:39:42+02:00 DEBUG (7): password: 21232f297a57a5a743894a0e4a801fc3
+2013-10-20T23:39:42+02:00 DEBUG (7): Login Exitoso
+2013-10-20T23:39:42+02:00 INFO (6): Debug log created
+2013-10-20T23:39:42+02:00 INFO (6): Debug log created
+2013-10-20T23:39:42+02:00 INFO (6): Debug log created
+2013-10-20T23:39:42+02:00 INFO (6): Debug log created
+2013-10-20T23:39:44+02:00 INFO (6): Debug log created
+2013-10-20T23:39:44+02:00 INFO (6): Debug log created
+2013-10-20T23:39:44+02:00 INFO (6): Debug log created
+2013-10-20T23:39:44+02:00 INFO (6): Debug log created
+2013-10-20T23:39:46+02:00 INFO (6): Debug log created
+2013-10-20T23:39:46+02:00 INFO (6): Debug log created
+2013-10-20T23:39:46+02:00 INFO (6): Debug log created
+2013-10-20T23:39:46+02:00 INFO (6): Debug log created
