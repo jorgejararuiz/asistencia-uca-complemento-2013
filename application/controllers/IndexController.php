@@ -60,7 +60,7 @@ class IndexController extends Zend_Controller_Action
         
     } catch (Exception $exc) {
         echo $exc->getTraceAsString();
-        $this->_debugLogger->debug($exc->getTraceAsString());
+        $this->_debugLogger->debug($exc->getMessage());
     }
 
         
@@ -109,19 +109,21 @@ class IndexController extends Zend_Controller_Action
     
     private function checkUnique($email){
 
+        
         $db = new Zend_Db_Adapter_Pdo_Pgsql(array(
              'host' => 'localhost',  
             'username' => 'admin',  
             'password' => 'admin',  
             'dbname' => 'asistenciaUCA'        
         ));
+        
         $regex = '/^[_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,3})$/';
         if (preg_match($regex, $email)){
             $select = $db->select()
                 ->from(array('public.personas'), array('email'))
                 ->where("email = ?", $email);
             
-            $this->_debugLogger->debug($select);
+            $this->_debugLogger->debug(print_r($select, true));
             $result = $db->fetchRow($select);
 
             if($result){
