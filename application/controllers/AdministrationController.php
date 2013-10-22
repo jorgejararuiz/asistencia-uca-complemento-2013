@@ -156,6 +156,95 @@ class AdministrationController extends Zend_Controller_Action
        
     }
     
+    public function getlistcheckinoutworkersAction(){
+        
+        $this->_helper->viewRenderer->setNoRender(true);
+        $this->_helper->layout->disableLayout();
+        
+        $config = new Zend_Config_Ini('../application/configs/application.ini', 'production');
+        $host = $config->resources->db->params->host;
+        $port = $config->resources->db->params->port;
+        $dbname = $config->resources->db->params->dbname;
+        $user = $config->resources->db->params->username;
+        $pass = $config->resources->db->params->password;
+
+        //Obtiene la Configuracion de la DB
+        $db = new Zend_Db_Adapter_Pdo_Pgsql(array(
+             'host' => $host,  
+            'username' => $user,  
+            'password' => $pass,  
+            'dbname' => $dbname        
+        ));
+        
+        
+       $select = "select A.nombre, A.apellido, C.entrada, C.salida ".
+	"from personas as A ".
+	"inner join rol_x_persona as B ". 
+	"on B.id_persona = A.id_persona ".
+	"inner join marcaciones_funcionarios as C ".
+	"on C.id_rol_x_persona = B.id_rol_x_persona";
+       
+       try {
+            $result = $db->fetchAll($select);
+            $this->_debugLogger->debug(print_r($result, true));  
+            $json = array(
+                "people" => $result
+            );
+            
+            $this->_debugLogger->debug(print_r(Zend_Json_Encoder::encode($json), true));
+            
+       } catch (Exception $exc) {
+           $this->_debugLogger->debug($exc->getMessage());
+       }
+       
+    }
+    
+    public function getlistcheckinoutteachersAction(){
+        
+        $this->_helper->viewRenderer->setNoRender(true);
+        $this->_helper->layout->disableLayout();
+        
+        $config = new Zend_Config_Ini('../application/configs/application.ini', 'production');
+        $host = $config->resources->db->params->host;
+        $port = $config->resources->db->params->port;
+        $dbname = $config->resources->db->params->dbname;
+        $user = $config->resources->db->params->username;
+        $pass = $config->resources->db->params->password;
+
+        //Obtiene la Configuracion de la DB
+        $db = new Zend_Db_Adapter_Pdo_Pgsql(array(
+             'host' => $host,  
+            'username' => $user,  
+            'password' => $pass,  
+            'dbname' => $dbname        
+        ));
+        
+        
+       $select = "select A.nombre, A.apellido, C.nombre as nombre_materia, D.entrada, D.salida  ".
+	"from personas as A ".
+	"inner join rol_x_persona as B ".
+	"on B.id_persona = A.id_persona ".
+	"and B.id_rol = 2 ".
+	"inner join materias as C ".
+	"on C.id_rol_x_persona = B.id_rol_x_persona ".
+	"inner join marcaciones_profesores as D ".
+	"on D.id_materia = C.id_materia";
+       
+       try {
+            $result = $db->fetchAll($select);
+            $this->_debugLogger->debug(print_r($result, true));  
+            $json = array(
+                "people" => $result
+            );
+            
+            $this->_debugLogger->debug(print_r(Zend_Json_Encoder::encode($json), true));
+            
+       } catch (Exception $exc) {
+           $this->_debugLogger->debug($exc->getMessage());
+       }
+       
+    }
+    
     private function checkUser($email, $password){
        /*Verifica que el usuario que va a ser login sea administrador 
         * para poder hacer el registro de usuario nuevo
