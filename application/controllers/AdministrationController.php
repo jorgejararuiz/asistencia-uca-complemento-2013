@@ -245,6 +245,14 @@ class AdministrationController extends Zend_Controller_Action
        
     }
     
+    public function listteachersAction(){
+        
+    }
+    
+    public function listworkersAction(){
+        
+    }
+    
     private function checkUser($email, $password){
        /*Verifica que el usuario que va a ser login sea administrador 
         * para poder hacer el registro de usuario nuevo
