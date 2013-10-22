@@ -1,7 +1,7 @@
 <?php
 echo $this->headScript()->
-        appendFile($this->baseUrl() . "/js/jquery-1.7.1.js")->
-        appendFile($this->baseUrl() . "/js/bootstrap/bootstrap.js");
+        appendFile($this->baseUrl() . "/js/jquery-1.10.2.min.js")->
+        appendFile($this->baseUrl() . "/js/typeahead.min.js");
 
 echo $this->headLink()
         ->setIndent('  ')
@@ -37,34 +37,10 @@ echo $this->headLink()
     </style>
 
     <script type="text/javascript">
-        function hideAlert() {
-            $("#value-alert").hide(1000);
-        }
-
-        function doSubmit() {
-            $("#login-form").submit();
-        }
-
         $(document).ready(function() {
-            setTimeout("hideAlert()", 7500);
-
-//            $("#login-btn").click(function(event) {
-//                doSubmit();
-//            });
-
-            $("#login-form").validate({
-                rules: {
-                    username: {
-                        required: true
-                    },
-                    password: {
-                        required: true
-                    }
-                },
-                messages: {
-                    username: "Username requerido",
-                    password: "Password requerido"
-                }
+            $('#username').typeahead({
+                name: 'funcionario',
+                local: ['Diego', 'Juanca', 'Chari'],
             });
         });
     </script>
