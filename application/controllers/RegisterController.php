@@ -79,7 +79,7 @@ class RegisterController extends Zend_Controller_Action {
                 $users->insertUser($data, $idRol);
                 $this->_debugLogger->debug("Inserted");
                 $this->addRol($idRol, $data['email']);
-
+                
                 //Manda Mail de confirmación
 //                   $config = array('auth' => 'login',
 //                        'port' => '26',
@@ -123,6 +123,7 @@ class RegisterController extends Zend_Controller_Action {
 //        $this->_debugLogger->debug("User ". $user);
 //        $this->_debugLogger->debug("Pass ". $pass);
         //Obtiene la Configuracion de la DB
+        
         $db = new Zend_Db_Adapter_Pdo_Pgsql(array(
             'host' => $host,
             'username' => $user,
@@ -134,12 +135,11 @@ class RegisterController extends Zend_Controller_Action {
                 ->from(array('personas'), array('id_persona'))
                 ->where("email = ?", $email);
         $result = $db->fetchRow($select);
-
+        
         $array = array(
             'id_persona' => $result['id_persona'],
             'id_rol' => $idRol
         );
-        $this->_debugLogger->debug("Insertado en Rol_X_Persona: " . print_r($array, true));
         $insert = $db->insert('rol_x_persona', $array);
 
 
@@ -214,6 +214,7 @@ class Users extends Zend_Db_Table_Abstract {
         ));
 
         $insert = $db->insert('personas', $data);
+        
     }
 
 //   function insertRol($idPersona, $idRol){

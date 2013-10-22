@@ -107,11 +107,7 @@ class AdministrationController extends Zend_Controller_Action
        try {
             $result = $db->fetchAll($select);
             $this->_debugLogger->debug(print_r($result, true));  
-            $json = array(
-                "people" => $result
-            );
-            
-            $this->_debugLogger->debug(print_r(Zend_Json_Encoder::encode($json), true));
+            $this->_debugLogger->debug(print_r(Zend_Json_Encoder::encode($result), true));
             
        } catch (Exception $exc) {
            $this->_debugLogger->debug($exc->getMessage());
@@ -144,11 +140,8 @@ class AdministrationController extends Zend_Controller_Action
        try {
             $result = $db->fetchAll($select);
             $this->_debugLogger->debug(print_r($result, true));  
-            $json = array(
-                "people" => $result
-            );
-            
-            $this->_debugLogger->debug(print_r(Zend_Json_Encoder::encode($json), true));
+            $this->_debugLogger->debug(print_r(Zend_Json_Encoder::encode($result), true));
+
             
        } catch (Exception $exc) {
            $this->_debugLogger->debug($exc->getMessage());
@@ -187,11 +180,7 @@ class AdministrationController extends Zend_Controller_Action
        try {
             $result = $db->fetchAll($select);
             $this->_debugLogger->debug(print_r($result, true));  
-            $json = array(
-                "people" => $result
-            );
-            
-            $this->_debugLogger->debug(print_r(Zend_Json_Encoder::encode($json), true));
+            $this->_debugLogger->debug(print_r(Zend_Json_Encoder::encode($result), true));
             
        } catch (Exception $exc) {
            $this->_debugLogger->debug($exc->getMessage());
@@ -233,12 +222,8 @@ class AdministrationController extends Zend_Controller_Action
        try {
             $result = $db->fetchAll($select);
             $this->_debugLogger->debug(print_r($result, true));  
-            $json = array(
-                "people" => $result
-            );
-            
-            $this->_debugLogger->debug(print_r(Zend_Json_Encoder::encode($json), true));
-            
+            $this->_debugLogger->debug(print_r(Zend_Json_Encoder::encode($result), true));
+
        } catch (Exception $exc) {
            $this->_debugLogger->debug($exc->getMessage());
        }
