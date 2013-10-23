@@ -108,7 +108,7 @@ class AdministrationController extends Zend_Controller_Action
             $result = $db->fetchAll($select);
             $this->_debugLogger->debug(print_r($result, true));  
             $this->_debugLogger->debug(print_r(Zend_Json_Encoder::encode($result), true));
-            
+            echo Zend_Json_Encoder::encode($result);
        } catch (Exception $exc) {
            $this->_debugLogger->debug($exc->getMessage());
        }
@@ -142,7 +142,7 @@ class AdministrationController extends Zend_Controller_Action
             $this->_debugLogger->debug(print_r($result, true));  
             $this->_debugLogger->debug(print_r(Zend_Json_Encoder::encode($result), true));
 
-            
+            echo Zend_Json_Encoder::encode($result);
        } catch (Exception $exc) {
            $this->_debugLogger->debug($exc->getMessage());
        }
@@ -182,6 +182,7 @@ class AdministrationController extends Zend_Controller_Action
             $this->_debugLogger->debug(print_r($result, true));  
             $this->_debugLogger->debug(print_r(Zend_Json_Encoder::encode($result), true));
             
+            echo Zend_Json_Encoder::encode($result);
        } catch (Exception $exc) {
            $this->_debugLogger->debug($exc->getMessage());
        }
@@ -224,6 +225,7 @@ class AdministrationController extends Zend_Controller_Action
             $this->_debugLogger->debug(print_r($result, true));  
             $this->_debugLogger->debug(print_r(Zend_Json_Encoder::encode($result), true));
 
+            echo Zend_Json_Encoder::encode($result);
        } catch (Exception $exc) {
            $this->_debugLogger->debug($exc->getMessage());
        }
