@@ -74,12 +74,15 @@ class RegisterController extends Zend_Controller_Action {
                 unset($data['contrasenha2']);
                 $idRol = $data['id_rol'];
                 unset($data['id_rol']);
-//                   try {
-                $this->_debugLogger->debug("About to insert");
-                $users->insertUser($data, $idRol);
-                $this->_debugLogger->debug("Inserted");
-                $this->addRol($idRol, $data['email']);
-                 
+                try {
+                    $this->_debugLogger->debug("About to insert");
+                    $this->_debugLogger->debug("[User] ".print_r($data, true). " [idRol]". $idRol);
+                    $users->insertUser($data, $idRol);
+                    $this->_debugLogger->debug("Inserted");
+                    $this->addRol($idRol, $data['email']);
+                }  catch (Exception $exc){
+                    $this->_debugLogger->debug($exc->getMessage());
+                }
                 //Manda Mail de confirmación
 //                   $config = array('auth' => 'login',
 //                        'port' => '26',
@@ -211,9 +214,9 @@ class Users extends Zend_Db_Table_Abstract {
             'password' => $pass,
             'dbname' => $dbname
         ));
-
-        $insert = $db->insert('personas', $data);
         
+        $insert = $db->insert('personas', $data);
+
     }
 
 //   function insertRol($idPersona, $idRol){
