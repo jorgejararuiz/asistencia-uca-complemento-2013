@@ -17,7 +17,7 @@ echo $this->headLink()
         tr,td{
             padding: 10px;
         }
-        #logo{margin: 20px;}
+        #logo{margin: 20px; padding: auto; text-align: center}
         a{
             text-align: right;
             text-decoration: none;
@@ -70,13 +70,29 @@ echo $this->headLink()
     </script>
 
 </head>
-<div class="span6" style="margin: 0px;">
     <div id="logo">   
-        <h1>Sistema de Marcación</h1>
+        <h1>Listado de Marcación</h1>
     </div>
-    <div id="login" >
-                   ACA VA LA TABLA CON EL LISTADO DE LAS MARCACIONES DE LOS PROFESORES
-                    <?php echo $this->loginError; ?>
-    </div>
-</div>
+        <table class="container table table-striped table-bordered">
+                    <?php
+                    $firsttime = true;
+                    foreach ($this->marcaciones as $key => $marcacion)
+                   {
+                        if($firsttime){
+                            $firsttime = false;
+                            ?><tr><?php
+                            foreach($marcacion as $campo => $valor){
+                                ?><th><?php echo $campo ?></th><?php
+                            }
+                            ?></tr><?php
+                        }
+                        
+                       ?><tr><?php
+                           foreach($marcacion as $campo => $valor){
+                             ?><td><?php echo $valor ?></td>
+                        <?php
+                           }
+                       ?></tr><?php
+                   } ?>
+        </table>
 <div class="span3"></div>

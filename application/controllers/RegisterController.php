@@ -79,7 +79,7 @@ class RegisterController extends Zend_Controller_Action {
                 $users->insertUser($data, $idRol);
                 $this->_debugLogger->debug("Inserted");
                 $this->addRol($idRol, $data['email']);
-                
+                 
                 //Manda Mail de confirmación
 //                   $config = array('auth' => 'login',
 //                        'port' => '26',
@@ -141,7 +141,6 @@ class RegisterController extends Zend_Controller_Action {
             'id_rol' => $idRol
         );
         $insert = $db->insert('rol_x_persona', $array);
-
 
         return true;
     }
