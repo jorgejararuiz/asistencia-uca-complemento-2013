@@ -6,7 +6,8 @@ echo $this->headScript()->
 echo $this->headLink()
         ->setIndent('  ')
         ->prependStylesheet($this->baseUrl() . "/css/bootstrap/bootstrap.css")
-        ->prependStylesheet($this->baseUrl() . "/css/bootstrap/bootstrap-responsive.css");
+        ->prependStylesheet($this->baseUrl() . "/css/bootstrap/bootstrap-responsive.css")
+        ->prependStylesheet($this->baseUrl() . "/css/typeahead.css");
 ?>
 <head>
 
@@ -40,7 +41,11 @@ echo $this->headLink()
         $(document).ready(function() {
             $('#username').typeahead({
                 name: 'funcionario',
-                local: ['Diego', 'Juanca', 'Chari'],
+                local: '../administration/getworkers',
+                template: [
+                    '<p>{{nombre}}</p>',
+                    '<p>{{apellido}}</p>',
+                    '<p>{{cedula}}</p>'
             });
         });
     </script>
@@ -57,9 +62,7 @@ echo $this->headLink()
                 <tr><td>Usuario</td><td><input type="text" id="username" name="username"></td></tr>
                 <tr><td></td><td>
                 <input type="submit" id="submit">
-                <!--<a onclick="doSubmit();" href="#" class="btn btn-primary" id="login-btn"> <i class="icon-hand-right icon-white"></i>Marcar</a></td>-->
 
-                    <?php echo $this->loginError; ?>
             </table>
         </form>
     </div>
