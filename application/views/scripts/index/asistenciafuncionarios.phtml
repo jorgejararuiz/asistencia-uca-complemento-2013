@@ -1,7 +1,8 @@
 <?php
-echo $this->headScript()->
-        appendFile($this->baseUrl() . "/js/jquery-1.10.2.min.js")->
-        appendFile($this->baseUrl() . "/js/typeahead.min.js");
+echo $this->headScript()
+        ->appendFile($this->baseUrl() . "/js/jquery-1.10.2.min.js")
+        ->appendFile($this->baseUrl() . "/js/typeahead.min.js")
+        ->appendFile($this->baseUrl() . "/js/hogan-2.0.0.js");
 
 echo $this->headLink()
         ->setIndent('  ')
@@ -39,14 +40,25 @@ echo $this->headLink()
 
     <script type="text/javascript">
         $(document).ready(function() {
+            var list = [];
+
+            $.ajax({
+                url: "../administration/getworkers",
+                success: function(data) {
+                    for (var i = 0; i < data.length; i++) {
+                        list.push(data[i].email);
+                        alert(list);
+                    }
+                },
+                dataType: 'json',
+                async: false
+            });
+
             $('#username').typeahead({
                 name: 'funcionario',
-                local: '../administration/getworkers',
-                template: [
-                    '<p>{{nombre}}</p>',
-                    '<p>{{apellido}}</p>',
-                    '<p>{{cedula}}</p>'
+                local: list
             });
+
         });
     </script>
 
