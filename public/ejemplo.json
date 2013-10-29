@@ -1,0 +1,18 @@
+[
+    {
+        "id_persona": 1,
+        "nombre": "Salustiano",
+        "apellido": "Facultad",
+        "email": "salustiano@uca.edu.py",
+        "ci": 1234657,
+        "tokens": ['puto']
+    },
+    {
+        "id_persona": 2,
+        "nombre": "Sergio",
+        "apellido": "Aranda",
+        "email": "sergio@uca.edu.py",
+        "ci": 9876543,
+        "tokens": ["travesti"]
+    }
+]

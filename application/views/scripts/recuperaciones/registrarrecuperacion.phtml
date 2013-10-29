@@ -1,12 +1,19 @@
 <?php
-echo $this->headScript()->
-        appendFile($this->baseUrl() . "/js/jquery-1.7.1.js")->
-        appendFile($this->baseUrl() . "/js/bootstrap/bootstrap.js");
+echo $this->headScript()
+        ->appendFile($this->baseUrl() . "/js/jquery-1.10.2.min.js")
+        ->appendFile($this->baseUrl() . "/js/typeahead.min.js")
+        ->appendFile($this->baseUrl() . "/js/jquery-ui-1.10.3.custom.min.js")
+        ->appendFile($this->baseUrl() . "/js/bootstrap.min.js")
+        ->appendFile($this->baseUrl() . "/js/bootstrap-timepicker.min.js")
+        ->appendFile($this->baseUrl() . "/js/hogan-2.0.0.js");
 
 echo $this->headLink()
         ->setIndent('  ')
         ->prependStylesheet($this->baseUrl() . "/css/bootstrap/bootstrap.css")
-        ->prependStylesheet($this->baseUrl() . "/css/bootstrap/bootstrap-responsive.css");
+        ->prependStylesheet($this->baseUrl() . "/css/bootstrap-timepicker.min.css")
+        ->prependStylesheet($this->baseUrl() . "/css/bootstrap/bootstrap-responsive.css")
+        ->prependStylesheet($this->baseUrl() . "/css/jquery-ui-1.10.3.custom.min.css")
+        ->prependStylesheet($this->baseUrl() . "/css/typeahead.css");
 ?>
 <head>
 
@@ -37,35 +44,45 @@ echo $this->headLink()
     </style>
 
     <script type="text/javascript">
-        function hideAlert() {
-            $("#value-alert").hide(1000);
-        }
-
-        function doSubmit() {
-            $("#login-form").submit();
-        }
-
         $(document).ready(function() {
-            setTimeout("hideAlert()", 7500);
+            var list = [];
+            var json;
+            
 
-//            $("#login-btn").click(function(event) {
-//                doSubmit();
-//            });
-
-            $("#login-form").validate({
-                rules: {
-                    username: {
-                        required: true
-                    },
-                    password: {
-                        required: true
+            $.ajax({
+                url: "../administration/getteachers",
+                success: function(data) {
+                    json = data;
+                    for (var i = 0; i < data.length; i++) {
+                        if (list.indexOf(data[i].email) === -1)
+                            list.push(data[i].email);
                     }
                 },
-                messages: {
-                    username: "Username requerido",
-                    password: "Password requerido"
+                dataType: 'json',
+                async: false
+            });
+
+            $('#username').typeahead({
+                name: 'profesor',
+                local: list
+            });
+
+            $('#username').blur(function() {
+                var email = $('#username').val();
+                $('#materia').empty();
+                var data = json;
+
+                for (var i = 0; i < data.length; i++) {
+                    if (data[i].email === email) {
+                        $('#materia').append('<option value="' + data[i].id_materia + '">' + data[i].nombre_materia + '</option>');
+                    }
                 }
             });
+            
+            $('#fecha').datepicker({dateFormat: 'yy-mm-dd'});
+            $('#hora_inicio').timepicker({showMeridian: false});
+            $('#hora_fin').timepicker({showMeridian: false});
+
         });
     </script>
 
@@ -79,16 +96,12 @@ echo $this->headLink()
         <form id="login-form" action="<?php echo $this->url(array('controller' => 'administration', 'action' => 'login')); ?>" method="post">
             <table>
                 <tr><td>Usuario</td><td><input type="text" id="username" name="username"></td></tr>
-                <tr><td>Materias</td><td><select name="materia">
-                        <option value="1">Ecuaciones Diferenciales</option>
-                        <option value="2">Estadística</option>
-                        <option value="3">Informatica 3</option>
-                        <option value="4">Ingenieria de Software</option>
-                </select>
+                <tr><td>Materias</td><td><select name="materia" id="materia"></select>
                 </tr>
                 <tr><td>Fecha de Recuperación</td><td><input type="text" id="fecha" name="fecha"></td></tr>
-                <tr><td></td><td>
-                <input type="submit" id="submit">
+                <tr><td>Hora Inicio</td><td><input type="text" id="hora_inicio" name="hora_inicio"></td></tr>
+                <tr><td>Hora Fin</td><td><input type="text" id="hora_fin" name="hora_fin"></td></tr>
+                <tr><td><input type="submit" id="submit"><tr><td>
 
                     <?php echo $this->loginError; ?>
             </table>
