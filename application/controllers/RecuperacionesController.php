@@ -28,17 +28,16 @@ class RecuperacionesController extends Zend_Controller_Action
             {
                 if ($this->checkUnique($username) == true)
                 {
+                    $userId = $this->obtainUserId($username);
                     //Se le pasa 0 como segundo parametro para indicar que 
                     //es profesor
                     if ($this->isCheckOut($materia, 0))
                     {
-                        $horario = 1;
-                        $errorRegistering = $this->insertCheckOutTeacher($horario, $materia);
+                        $errorRegistering = $this->insertCheckOutTeacher($materia, $userId);
                     }
                     else
                     {
-                        $horario = 1;
-                        $errorRegistering = $this->insertRegisterTeacher($horario, $materia);
+                        $errorRegistering = $this->insertRegisterTeacher( $materia, $userId);
                     }
                 }
                 else
@@ -171,7 +170,46 @@ class RecuperacionesController extends Zend_Controller_Action
         return false;
     }
     
-    private function insertCheckOutTeacher($horario, $materia)
+    private function updateCheckInTeacher($materia, $userId){
+        
+        //Obtiene la Configuracion de la DB
+        $config = new Zend_Config_Ini('../application/configs/application.ini', 'production');
+
+        $host = $config->resources->db->params->host;
+        $dbname = $config->resources->db->params->dbname;
+        $user = $config->resources->db->params->username;
+        $pass = $config->resources->db->params->password;
+
+        //Obtiene la Configuracion de la DB
+        $db = new Zend_Db_Adapter_Pdo_Pgsql(array(
+            'host' => $host,
+            'username' => $user,
+            'password' => $pass,
+            'dbname' => $dbname
+        ));
+
+        $insert = "update recuperaciones set entrada = now(), salida = now() "
+                . "  where id_rol_x_persona = " . $userId
+                . "  and id_materia = " . $materia;
+
+
+        $this->_debugLogger->debug($insert);
+        try {
+            //Intenta meter en la DB
+            $result = $db->fetchRow($insert);
+        } catch (Exception $exc) {
+            $this->_debugLogger->debug($exc->getTraceAsString());
+        }
+
+        if ($result)
+        {
+            return true;
+        }
+        return false;
+        
+    }
+    
+    private function insertCheckOutTeacher($materia, $userId)
     {
 
         //Obtiene la Configuracion de la DB
@@ -190,10 +228,14 @@ class RecuperacionesController extends Zend_Controller_Action
             'password' => $pass,
             'dbname' => $dbname
         ));
+        /*
+         *  update recuperaciones set salida = now()
+            where id_rol_x_persona = 1 and id_materia = 1;
+         */
 
-        $insert = "update marcaciones_profesores set salida = now() "
+        $insert = "update recuperaciones set salida = now() "
                 . "  where entrada = salida"
-                . "  and id_horario = " . $horario
+                . "  and id_rol_x_persona = " . $userId
                 . "  and id_materia = " . $materia;
 
 
@@ -212,7 +254,45 @@ class RecuperacionesController extends Zend_Controller_Action
         return false;
     }
     
-    private function insertRegisterTeacher($horario, $materia)
+    private function insertRegisterTeacher($materia, $userId)
+    {
+
+        $config = new Zend_Config_Ini('../application/configs/application.ini', 'production');
+
+        $host = $config->resources->db->params->host;
+        $port = $config->resources->db->params->port;
+        $dbname = $config->resources->db->params->dbname;
+        $user = $config->resources->db->params->username;
+        $pass = $config->resources->db->params->password;
+
+        //Obtiene la Configuracion de la DB
+        $db = new Zend_Db_Adapter_Pdo_Pgsql(array(
+            'host' => $host,
+            'username' => $user,
+            'password' => $pass,
+            'dbname' => $dbname
+        ));
+       
+        $insert = "insert into recuperaciones "
+                . "(hora_inicio, hora_fin, id_rol_x_persona, id_materia) values "
+                . "(now(), now(), " . $userId. ", " . $materia . ")";
+
+        $this->_debugLogger->debug($insert);
+        try {
+            //Intenta meter en la DB
+            $result = $db->fetchRow($insert);
+        } catch (Exception $exc) {
+            $this->_debugLogger->debug($exc->getTraceAsString());
+        }
+
+        if ($result)
+        {
+            return true;
+        }
+        return false;
+    }
+    
+    private function obtainUserId($username)
     {
 
         $config = new Zend_Config_Ini('../application/configs/application.ini', 'production');
@@ -231,24 +311,49 @@ class RecuperacionesController extends Zend_Controller_Action
             'dbname' => $dbname
         ));
 
-
-        $insert = "insert into marcaciones_profesores "
-                . "(entrada, salida, id_horario, id_materia) values "
-                . "(now(), now(), " . $horario . ", " . $materia . ")";
-
-        $this->_debugLogger->debug($insert);
-        try {
-            //Intenta meter en la DB
-            $result = $db->fetchRow($insert);
-        } catch (Exception $exc) {
-            $this->_debugLogger->debug($exc->getTraceAsString());
-        }
-
-        if ($result)
+        $regex = '/^[_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,3})$/';
+        if (preg_match($regex, $username))
         {
-            return true;
+            $select = "select ROL.id_rol_x_persona from rol_x_persona as ROL "
+                    . "inner join personas as PERSONAS "
+                    . "on PERSONAS.email = '" . $username
+                    . "' and PERSONAS.id_persona = ROL.id_persona;";
+
+            $this->_debugLogger->debug($select);
+            try {
+                //Intenta meter en la DB
+                $result = $db->fetchRow($select);
+            } catch (Exception $exc) {
+                $this->_debugLogger->debug($exc->getTraceAsString());
+            }
+
+            if ($result)
+            {
+                return $result;
+            }
+            return -1;
         }
-        return false;
+        else
+        {
+            $select = "select ROL.id_rol_x_persona from rol_x_persona as ROL "
+                    . "inner join personas as PERSONAS "
+                    . "on PERSONAS.ci = " . intval($username)
+                    . " and PERSONAS.id_persona = ROL.id_persona;";
+
+            $this->_debugLogger->debug($select);
+            try {
+                //Intenta meter en la DB
+                $result = $db->fetchRow($select);
+            } catch (Exception $exc) {
+                $this->_debugLogger->debug($exc->getTraceAsString());
+            }
+
+            if ($result)
+            {
+                return $result;
+            }
+            return -1;
+        }
     }
 }
 
