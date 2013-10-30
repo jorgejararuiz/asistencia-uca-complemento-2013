@@ -1,9 +1,9 @@
 <?php
 echo $this->headScript()
         ->appendFile($this->baseUrl() . "/js/jquery-1.10.2.min.js")
+        //->appendFile($this->baseUrl() . "/js/bootstrap.min.js")
         ->appendFile($this->baseUrl() . "/js/typeahead.min.js")
         ->appendFile($this->baseUrl() . "/js/jquery-ui-1.10.3.custom.min.js")
-        ->appendFile($this->baseUrl() . "/js/bootstrap.min.js")
         ->appendFile($this->baseUrl() . "/js/bootstrap-timepicker.min.js")
         ->appendFile($this->baseUrl() . "/js/hogan-2.0.0.js");
 
@@ -78,10 +78,10 @@ echo $this->headLink()
                     }
                 }
             });
-            
             $('#fecha').datepicker({dateFormat: 'yy-mm-dd'});
-            $('#hora_inicio').timepicker({showMeridian: false});
-            $('#hora_fin').timepicker({showMeridian: false});
+            $.datepicker.setDefaults( $.datepicker.regional[ "es" ] );
+            /*$('#hora_inicio').timepicker({showMeridian: false});
+            $('#hora_fin').timepicker({showMeridian: false});*/
 
         });
     </script>
@@ -99,13 +99,14 @@ echo $this->headLink()
                 <tr><td>Materias</td><td><select name="materia" id="materia"></select>
                 </tr>
                 <tr><td>Fecha de Recuperación</td><td><input type="text" id="fecha" name="fecha"></td></tr>
-                <tr><td>Hora Inicio</td><td><input type="text" id="hora_inicio" name="hora_inicio"></td></tr>
-                <tr><td>Hora Fin</td><td><input type="text" id="hora_fin" name="hora_fin"></td></tr>
+                <tr><td>Hora Inicio</td><td><input type="text" id="hora_inicio" name="hora_inicio" placeholder="9:00"></td></tr>
+                <tr><td>Hora Fin</td><td><input type="text" id="hora_fin" name="hora_fin" placeholder="10:00"></td></tr>
                 <tr><td><input type="submit" id="submit"><tr><td>
 
                     <?php echo $this->loginError; ?>
             </table>
         </form>
+        <p>Obs: La fecha debe ser en formato 24hs. Ej: 17:00 para una recuperación a las 5 de la tarde.</p>
     </div>
 </div>
 <div class="span3"></div>
